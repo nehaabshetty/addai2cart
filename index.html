@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XY POS – Genie Assist</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+  
+  <style>
+    /* 🎨 Global and Base Styles */
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: #e5e7eb; /* Light gray text for contrast */
+      background: #121212; /* Dark background */
+    }
+
+    /* 📱 App Bar (Header) */
+    .app-bar {
+      height: 56px;
+      background: #1e1e1e; /* Slightly lighter dark background for the bar */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      color: #f9fafb;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .header-info {
+        display: flex;
+        gap: 20px;
+    }
+
+    .header-item {
+        display: flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .header-item.stylist-dev {
+        background-color: rgba(30, 200, 30, 0.1); /* Light green tint */
+        color: #50c450; /* Green text */
+    }
+
+    .header-item.na {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #f9fafb;
+    }
+
+    .header-item .icon {
+        margin-right: 6px;
+        font-size: 16px;
+    }
+
+    .app-bar .title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f9fafb;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* 📊 Dashboard Layout */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr; /* Adjusting the ratio to match the image */
+      gap: 16px;
+      padding: 16px;
+    }
+    
+    .card {
+      background: #1e1e1e; /* Dark card background */
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+    }
+
+    /* 👈 Left Panel Styling */
+    .admin-info {
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 16px;
+    }
+
+    .admin-info .name {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    
+    .admin-info .store {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    .admin-info .date {
+        font-size: 12px;
+        opacity: 0.6;
+        margin-top: 4px;
+    }
+
+    .new-bag-button {
+        width: 100%;
+        padding: 14px 0;
+        margin-bottom: 24px;
+        background: rgb(64 156 255); /* Blue button */
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+    }
+
+    .new-bag-button .icon {
+        margin-right: 8px;
+    }
+
+    .section-title {
+        font-size: 12px;
+        color: #9ca3af; /* Gray text for titles */
+        font-weight: 600;
+        margin-bottom: 10px;
+        padding-left: 4px;
+    }
+
+    .order-item, .link-item, .task-item {
+        background: #282828; /* Slightly lighter background for list items */
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .order-item:hover, .link-item:hover, .task-item:hover {
+        background-color: #333333;
+    }
+    
+    .order-details {
+        display: flex;
+        align-items: center;
+    }
+
+    .order-details .icon {
+        background: #4b5563; /* Dark gray icon background */
+        color: #f9fafb;
+        padding: 8px;
+        border-radius: 6px;
+        margin-right: 12px;
+        font-size: 18px;
+    }
+
+    .order-name {
+        font-size: 16px;
+        font-weight: 600;
+    }
+    
+    .order-value {
+        font-size: 14px;
+        opacity: 0.7;
+    }
+
+    .order-time, .task-status {
+        font-size: 12px;
+        opacity: 0.5;
+    }
+    
+    /* Links and Tasks specific styling */
+    .link-item .icon, .task-item .icon {
+        background: #2563eb; /* Blue icon background for links/tasks */
+        color: #ffffff;
+        padding: 8px;
+        border-radius: 6px;
+        margin-right: 12px;
+        font-size: 18px;
+    }
+
+    /* 👉 Right Panel Styling (Metrics) */
+    .metrics-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: #282828; /* Slightly lighter card for metrics */
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 80px; /* Ensure a consistent height */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .metric-card.daily {
+        background: #1e1e1e; /* Darker background for Daily Sales */
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .metric-card .label {
+      font-size: 12px;
+      color: #9ca3af;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .metric-card .value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    .metric-card .sub-value {
+        font-size: 14px;
+        opacity: 0.6;
+        margin-top: 4px;
+    }
+
+    .metric-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .total-consignments {
+        margin-top: 24px;
+    }
+
+    .total-consignments .value {
+        font-size: 40px;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="app-bar">
+    <div class="header-info">
+        <div class="header-item stylist-dev">
+             Stylist Dev
+        </div>
+    </div>
+    <div class="title">Home</div>
+    <div class="header-info">
+        <div class="header-item na">
+            <span class="icon">NA</span>
+        </div>
+    </div>
+  </div>
+  
+  <div class="dashboard">
+    <div class="left-panel">
+      <div class="card admin-card">
+        <div class="admin-info">
+            <div class="name">Admin XYS</div>
+            <div class="store">XY Retail Test Store</div>
+            <div class="date">Today Date, 2025</div>
+        </div>
+        
+        <button class="new-bag-button">
+            <span class="icon">🛍️</span> New Bag
+        </button>
+        
+        <div class="section-title">OPEN ORDERS</div>
+        <div class="order-item">
+            <div class="order-details">
+                <span class="icon">⏸️</span>
+                <div>
+                    <div class="order-name">WALK IN</div>
+                    <div class="order-value">$0.00</div>
+                </div>
+            </div>
+            <div class="order-time">6 hours ago</div>
+        </div>
+
+        <div class="section-title" style="margin-top: 24px;">LINKS</div>
+        <div class="link-item">
+            <div class="order-details">
+                <span class="icon">💰</span>
+                <div class="order-name">CASH DRAWERS</div>
+            </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 24px;">TASKS</div>
+        <div class="task-item">
+            <div class="order-details">
+                <span class="icon">🔗</span>
+                <div>
+                    <div class="order-name">PAY BY LINK</div>
+                    <div class="task-status">0 Orders are pending payment</div>
+                </div>
+            </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="metrics-container" style="margin-bottom: 16px;">
+        <div class="metric-card daily">
+          <div class="label">Daily Sales</div>
+          <div class="value">$0.00</div>
+        </div>
+        <div class="metric-card daily">
+          <div class="label">Daily Sales</div>
+          <div class="value">$0.00</div>
+        </div>
+      </div>
+      
+      <div class="metrics-container" style="margin-bottom: 16px;">
+        <div class="metric-card">
+          <div class="label">WTD</div>
+          <div class="value">$0.00</div>
+          <div class="sub-value">$0.00</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">MTD</div>
+          <div class="value">$0.00</div>
+          <div class="sub-value">$0.00</div>
+        </div>
+      </div>
+
+      <div class="metrics-container">
+        <div class="metric-card">
+          <div class="label">STD</div>
+          <div class="value">$0.00</div>
+          <div class="sub-value">$0.00</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">YTD</div>
+          <div class="value">$0.00</div>
+          <div class="sub-value">$0.00</div>
+        </div>
+      </div>
+
+      <div class="card total-consignments">
+        <div class="label" style="text-align: center;">TOTAL CONSIGNMENTS</div>
+        <div class="value">0</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createChat } from "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js";
+
+    createChat({
+      webhookUrl: "https://n8n.xyretail.com:9000/webhook/394aae66-ad88-4695-a8d4-cc0c0bf74dcf/chat",
+
+      initialMessages: [
+        "👋 Hi! I’m Genie Assist for XY POS.",
+        "How can I help you today?"
+      ],
+
+      theme: {
+        primary: "#2563eb",
+        background: "#ffffff",
+        text: "#020617"
+      }
+    });
+  </script>
+
+</body>
+</html>
